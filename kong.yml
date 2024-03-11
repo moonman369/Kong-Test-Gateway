@@ -19,6 +19,8 @@ services:
     url: https://portfolio-stats-api.cyclic.app/leetcode/moonman369
     routes:
       - name: leetcode-route
+        paths:
+          - /leetcode
         # plugins:
         #   - name: process-path-param
 
