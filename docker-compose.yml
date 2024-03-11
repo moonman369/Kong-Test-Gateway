@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  hello-service:
+    image: node:latest # Use Node.js image from Docker Hub
+    working_dir: /usr/src/app
+    volumes:
+      - ./hello-service:/usr/src/app # Mount local directory containing Node.js application code
+    ports:
+      - "8002:8002" # Map container port 3000 to host port 3000
+    # environment:
+    #   - NODE_ENV=production # Set environment variables if needed
+    command: sh -c "npm install && npm start" # Command to run your Node.js application
+
+  kong:
+    image: kong:latest
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/usr/local/kong/declarative/kong.yml
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "127.0.0.1:8001:8001"
+      - "127.0.0.1:8444:8444"
